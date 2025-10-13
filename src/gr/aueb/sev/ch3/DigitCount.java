@@ -9,11 +9,14 @@ import java.util.Scanner;
 public class DigitCount {
 
     public static void main(String[] args) {
+
+        // Δήλωση και αρχικοποίηση
         Scanner scanner = new Scanner(System.in);
         int inputNum = 0;
         int num = 0;
         int count = 0;
 
+        // Εντολές
         System.out.println("Παρακαλώ εισάγετε ένα ακέραιο");
         inputNum = scanner.nextInt();
 
@@ -23,5 +26,8 @@ public class DigitCount {
             count++;
             num = num / 10;
         } while (num != 0);
+
+        // Εκτύπωση των αποτελεσμάτων
+        System.out.println("Το πλήθος των ψηφίων του " + inputNum + " είναι: " + count);
     }
 }
