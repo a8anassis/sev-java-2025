@@ -25,4 +25,13 @@ public class AddApp {
 //
 //        return sum;
     }
+
+    // Overload - υπερφόρτωση
+    public static long add(int a, long b) {
+        return a + b;
+    }
+
+    public static int add(int a, int b, int c) {
+        return a + b + c;
+    }
 }
