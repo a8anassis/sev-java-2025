@@ -121,4 +121,10 @@ public class Account {
     private boolean isSsnValid(String ssn) {
         return this.ssn.equals(ssn);
     }
+
+    @Override
+    public String toString() {
+        return "id" + id + ", iban" + iban + ", firstname" + firstname +
+                ", lastname" + lastname + ", ssn" + ssn + ", balance" + balance;
+    }
 }
