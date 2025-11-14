@@ -12,5 +12,7 @@ public class Main {
         codingFactory.sayHello();
         codingFactory2.sayHello();
 
+        HelloUtil.sayHello();
+
     }
 }
