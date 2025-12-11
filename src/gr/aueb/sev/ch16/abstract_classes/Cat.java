@@ -1,6 +1,5 @@
 package gr.aueb.sev.ch16.abstract_classes;
 
-import java.sql.SQLOutput;
 
 public class Cat extends Animal {
 
