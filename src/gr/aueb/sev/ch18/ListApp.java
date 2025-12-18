@@ -42,6 +42,7 @@ public class ListApp {
             System.out.println(iterator.next());
         }
 
-        cities.forEach(System.out::println);    // recommended way for traversal
+        cities.forEach(item -> System.out.println(item));    // recommended way for traversal
+        cities.forEach(System.out::println);
     }
 }
