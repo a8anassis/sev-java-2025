@@ -1,14 +1,16 @@
 package gr.aueb.sev.bankapp.dto;
 
+import java.math.BigDecimal;
+
 public class AccountReadOnlyDTO {
     private String iban;
-    private double balance;
+    private BigDecimal balance;
 
     public AccountReadOnlyDTO() {
 
     }
 
-    public AccountReadOnlyDTO(String iban, double balance) {
+    public AccountReadOnlyDTO(String iban, BigDecimal balance) {
         this.iban = iban;
         this.balance = balance;
     }
@@ -21,11 +23,11 @@ public class AccountReadOnlyDTO {
         this.iban = iban;
     }
 
-    public double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(double balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 }
