@@ -52,6 +52,25 @@ public class AccountServiceImpl implements IAccountService {
     public void withdraw(String iban, BigDecimal amount)
             throws NegativeAmountException, AccountNotFoundException, InsufficientBalanceException {
 
+        try {
+            Account account = accountDAO
+                    .getByIban(iban)
+                    .orElseThrow(() -> new AccountNotFoundException("Account with iban=" + iban + " not found"));
+
+            if (amount.compareTo(BigDecimal.ZERO) < 0) {
+                throw new NegativeAmountException("Amount=" + amount + " must not be negative");
+            }
+
+            if (account.getBalance().compareTo(amount) < 0) {
+                throw new InsufficientBalanceException("Invalid amount=" + amount + " Amount must be less or equal to balance");
+            }
+
+            account.setBalance(account.getBalance().subtract(amount));
+            accountDAO.saveOrUpdate(account);
+        } catch (AccountNotFoundException | NegativeAmountException | InsufficientBalanceException e) {
+            System.err.println(e.getMessage());
+            throw e;
+        }
     }
 
     @Override
