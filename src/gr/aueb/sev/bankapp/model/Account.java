@@ -1,6 +1,7 @@
 package gr.aueb.sev.bankapp.model;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class Account {
     private String iban;
@@ -37,5 +38,16 @@ public class Account {
                 "iban='" + iban + '\'' +
                 ", balance=" + balance +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof Account account)) return false;
+        return Objects.equals(this.getIban(), account.getIban());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getIban());
     }
 }
