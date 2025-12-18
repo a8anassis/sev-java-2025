@@ -11,6 +11,7 @@ import gr.aueb.sev.bankapp.model.Account;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AccountServiceImpl implements IAccountService {
     private final IAccountDAO accountDAO;
@@ -75,16 +76,27 @@ public class AccountServiceImpl implements IAccountService {
 
     @Override
     public BigDecimal getBalance(String iban) throws AccountNotFoundException {
-        return null;
+        try {
+            Account account = accountDAO
+                    .getByIban(iban)
+                    .orElseThrow(() -> new AccountNotFoundException("Account with iban=" + iban + " not found"));
+            return account.getBalance();
+        } catch (AccountNotFoundException e) {
+            System.err.println(e.getMessage());
+            throw e;
+        }
     }
 
     @Override
     public List<AccountReadOnlyDTO> getAllAccounts() {
-        return List.of();
+        return accountDAO.getAccounts()
+                .stream()
+                .map(Mapper::mapToReadOnlyDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
     public boolean isAccountExists(String iban) {
-        return false;
+        return accountDAO.isAccountExists(iban);
     }
 }
