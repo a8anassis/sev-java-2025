@@ -5,8 +5,10 @@ import gr.aueb.sev.bankapp.core.exceptions.InsufficientBalanceException;
 import gr.aueb.sev.bankapp.core.exceptions.NegativeAmountException;
 import gr.aueb.sev.bankapp.core.mapper.Mapper;
 import gr.aueb.sev.bankapp.dao.IAccountDAO;
+import gr.aueb.sev.bankapp.dto.AccountDepositDTO;
 import gr.aueb.sev.bankapp.dto.AccountInsertDTO;
 import gr.aueb.sev.bankapp.dto.AccountReadOnlyDTO;
+import gr.aueb.sev.bankapp.dto.AccountWithdrawDTO;
 import gr.aueb.sev.bankapp.model.Account;
 
 import java.math.BigDecimal;
@@ -14,61 +16,60 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class AccountServiceImpl implements IAccountService {
-    private final IAccountDAO accountDAO;
+    private final IAccountDAO accountDAO;       // Dependencies
 
-    public AccountServiceImpl(IAccountDAO accountDAO) {
+    public AccountServiceImpl(IAccountDAO accountDAO) {         // Dependency Injection
         this.accountDAO = accountDAO;
     }
 
     @Override
-    public boolean createNewAccount(AccountInsertDTO accountInsertDTO) {
+    public AccountReadOnlyDTO createNewAccount(AccountInsertDTO accountInsertDTO) {
         Account account = Mapper.mapToModelEntity(accountInsertDTO);
         accountDAO.saveOrUpdate(account);
-        return true;
+        return Mapper.mapToReadOnlyDTO(account);
     }
 
     @Override
-    public void deposit(String iban, BigDecimal amount)
-            throws NegativeAmountException, AccountNotFoundException {
+    public void deposit(AccountDepositDTO depositDTO)
+            throws AccountNotFoundException {
 
         try {
-            Account account = accountDAO
-                    .getByIban(iban)
-                    .orElseThrow(() -> new AccountNotFoundException("Account with iban=" + iban + " not found"));
+            Account account = accountDAO.getByIban(depositDTO.iban())
+                    .orElseThrow(() -> new AccountNotFoundException("Account with iban=" + depositDTO.iban() + " not found"));
 
-            if (amount.compareTo(BigDecimal.ZERO) < 0) {
-                throw new NegativeAmountException("Amount=" + amount + " must not be negative");
-            }
+//            if (amount.compareTo(BigDecimal.ZERO) < 0) {
+//                throw new NegativeAmountException("Amount=" + amount + " must not be negative");
+//            }
 
-            account.setBalance(account.getBalance().add(amount));
+            account.setBalance(account.getBalance().add(depositDTO.amount()));
             accountDAO.saveOrUpdate(account);
             // logging
-        } catch (NegativeAmountException | AccountNotFoundException e) {
+        } catch (AccountNotFoundException e) {
             System.err.println(e.getMessage());     // logging
             throw e;
         }
     }
 
     @Override
-    public void withdraw(String iban, BigDecimal amount)
-            throws NegativeAmountException, AccountNotFoundException, InsufficientBalanceException {
+    public void withdraw(AccountWithdrawDTO withdrawDTO)
+            throws AccountNotFoundException, InsufficientBalanceException {
 
         try {
             Account account = accountDAO
-                    .getByIban(iban)
-                    .orElseThrow(() -> new AccountNotFoundException("Account with iban=" + iban + " not found"));
+                    .getByIban(withdrawDTO.iban())
+                    .orElseThrow(() -> new AccountNotFoundException("Account with iban=" + withdrawDTO.iban() + " not found"));
 
-            if (amount.compareTo(BigDecimal.ZERO) < 0) {
-                throw new NegativeAmountException("Amount=" + amount + " must not be negative");
+//            if (amount.compareTo(BigDecimal.ZERO) < 0) {
+//                throw new NegativeAmountException("Amount=" + amount + " must not be negative");
+//            }
+
+            if (account.getBalance().compareTo(withdrawDTO.amount()) < 0) {
+                throw new InsufficientBalanceException("Invalid amount=" + withdrawDTO.amount() + " Amount must be less or equal to balance");
             }
 
-            if (account.getBalance().compareTo(amount) < 0) {
-                throw new InsufficientBalanceException("Invalid amount=" + amount + " Amount must be less or equal to balance");
-            }
-
-            account.setBalance(account.getBalance().subtract(amount));
+            account.setBalance(account.getBalance().subtract(withdrawDTO.amount()));
             accountDAO.saveOrUpdate(account);
-        } catch (AccountNotFoundException | NegativeAmountException | InsufficientBalanceException e) {
+        } catch (AccountNotFoundException | InsufficientBalanceException e) {
             System.err.println(e.getMessage());
             throw e;
         }
@@ -77,8 +78,7 @@ public class AccountServiceImpl implements IAccountService {
     @Override
     public BigDecimal getBalance(String iban) throws AccountNotFoundException {
         try {
-            Account account = accountDAO
-                    .getByIban(iban)
+            Account account = accountDAO.getByIban(iban)
                     .orElseThrow(() -> new AccountNotFoundException("Account with iban=" + iban + " not found"));
             return account.getBalance();
         } catch (AccountNotFoundException e) {
@@ -92,7 +92,12 @@ public class AccountServiceImpl implements IAccountService {
         return accountDAO.getAccounts()
                 .stream()
                 .map(Mapper::mapToReadOnlyDTO)
-                .collect(Collectors.toList());
+                .toList();  // unmodifiable list
+    }
+
+    @Override
+    public int getCount() {
+        return accountDAO.count();
     }
 
     @Override
