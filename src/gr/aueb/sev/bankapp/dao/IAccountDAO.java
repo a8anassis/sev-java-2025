@@ -6,9 +6,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IAccountDAO {
-    void saveOrUpdate(Account account);
+    Account saveOrUpdate(Account account);
     void remove(String iban);
     Optional<Account> getByIban(String iban);
     List<Account> getAccounts();
+    int count();
+
+    // Queries
     boolean isAccountExists(String iban);
 }
