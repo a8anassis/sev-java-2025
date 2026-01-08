@@ -13,8 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Validator {
-    private static final IAccountDAO accountDAO = new AccountDAOImpl();
-    private static final IAccountService accountService = new AccountServiceImpl(accountDAO);
 
     /**
      * No instances of this class should be available.
