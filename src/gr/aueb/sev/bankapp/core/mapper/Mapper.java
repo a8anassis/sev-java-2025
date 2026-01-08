@@ -13,7 +13,7 @@ public class Mapper {
     }
 
     public static Account mapToModelEntity(AccountInsertDTO accountInsertDTO) {
-        return new Account(accountInsertDTO.getIban(), accountInsertDTO.getBalance());
+        return new Account(accountInsertDTO.iban(), accountInsertDTO.balance());
     }
 
     public static AccountReadOnlyDTO mapToReadOnlyDTO(Account account) {
