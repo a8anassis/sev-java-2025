@@ -82,12 +82,14 @@ public class Main {
                     }
                     default -> System.out.println("Μη έγκυρη επιλογή. Προσπαθήστε ξανά.");
                 }
-            } catch (AccountNotFoundException | InsufficientBalanceException e) {
-                System.out.println(e.getMessage());
+            } catch (AccountNotFoundException e) {
+                System.out.println("Ο Λογαριασμός δεν βρέθηκε");
             } catch (NumberFormatException e) {
                 System.out.println("Λάθος μορφή αριθμού.");
             } catch (ValidationException e) {
                 System.out.println("Λάθος στην επαλήθευση: " + e.getMessage());
+            } catch (InsufficientBalanceException e) {
+                System.out.println("Ανεπαρκές Υπόλοιπο");
             }
         }
     }
